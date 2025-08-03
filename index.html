@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luminar (Nighty) | Matrix PDF Tools</title>
+    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.21.4/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=IBM+Plex+Mono:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0A0A0A; --text-primary: #FFFFFF; --text-secondary: #B0B0B0;
+            --accent-green: #00FF41; --accent-cyan: #00D4FF; --accent-red: #FF2D55;
+            --glow-green: 0 0 15px rgba(0, 255, 65, 0.7); --glow-cyan: 0 0 15px rgba(0, 212, 255, 0.7);
+        }
+        body { background-color: var(--bg-primary); color: var(--text-primary); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.5; }
+        .font-plex { font-family: 'IBM Plex Mono', monospace; } .font-fira { font-family: 'Fira Code', monospace; }
+        .btn-matrix { transition: all 0.3s ease; box-shadow: 0 0 5px var(--accent-cyan); border: 1px solid var(--accent-cyan); }
+        .btn-matrix:hover { transform: scale(1.05); box-shadow: var(--glow-cyan); }
+        .btn-matrix.active { border-color: var(--accent-green); box-shadow: var(--glow-green); color: var(--accent-green); }
+        .input-matrix { background-color: rgba(26, 26, 26, 0.5); border: 1px solid var(--accent-cyan); transition: all 0.3s ease; }
+        .input-matrix:focus { outline: none; border-color: var(--accent-green); box-shadow: var(--glow-green); }
+        .btn-action { background-color: var(--accent-green); color: var(--bg-primary); transition: transform 0.2s ease; }
+        .btn-action:hover:not(:disabled) { transform: scale(1.05); }
+        .preview-box { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out; }
+        .preview-box.expanded { max-height: 75vh; }
+        .placement-grid-btn {
+            border: 1px solid var(--accent-cyan); background-color: rgba(0, 212, 255, 0.1);
+            transition: all 0.2s ease-in-out;
+        }
+        .placement-grid-btn:hover { border-color: var(--accent-green); background-color: rgba(0, 255, 65, 0.2); }
+        .placement-grid-btn.active { border-color: var(--accent-green); background-color: var(--accent-green); color: var(--bg-primary); box-shadow: var(--glow-green); }
+    </style>
+</head>
+<body>
+    <canvas id="matrix-canvas"></canvas>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const MatrixRain = () => { /* ... No changes to this component ... */
+            const canvasRef = useRef(null);
+            useEffect(() => {
+                const canvas = canvasRef.current; if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+                const alphabet = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッンABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                const fontSize = 16; const columns = Math.floor(canvas.width / fontSize);
+                const rainDrops = Array(columns).fill(1); let animationFrameId;
+                const draw = () => {
+                    ctx.fillStyle = 'rgba(10, 10, 10, 0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = '#00FF41'; ctx.font = fontSize + 'px monospace';
+                    for (let i = 0; i < rainDrops.length; i++) {
+                        const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                        ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+                        if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) { rainDrops[i] = 0; }
+                        rainDrops[i]++;
+                    }
+                    animationFrameId = requestAnimationFrame(draw);
+                };
+                draw(); return () => cancelAnimationFrame(animationFrameId);
+            }, []);
+            return <canvas ref={canvasRef} id="matrix-canvas" />;
+         };
+        
+        const App = () => { /* ... No changes to this component ... */
+            const [activeTab, setActiveTab] = useState('extractor');
+            const aboutRef = useRef(null);
+            useEffect(() => {
+                gsap.registerPlugin(ScrollTrigger);
+                gsap.from(".hero-title", { duration: 1, y: 50, opacity: 0, delay: 0.5, ease: "power3.out" });
+                gsap.from(".hero-subtitle", { duration: 1, y: 30, opacity: 0, delay: 0.8, ease: "power3.out" });
+                gsap.from(".feature-selector", { duration: 1, y: 30, opacity: 0, delay: 1.1, ease: "power3.out" });
+                gsap.from(aboutRef.current, { scrollTrigger: { trigger: aboutRef.current, start: "top 85%", end: "bottom 60%", scrub: true }, y: 100, opacity: 0, ease: "none", });
+            }, []);
+            return (
+                <>
+                    <MatrixRain />
+                    <div className="min-h-screen flex flex-col items-center p-4 sm:p-6 md:p-8 relative z-10">
+                        <header className="text-center my-12 font-plex">
+                             <h1 className="text-4xl md:text-5xl font-bold tracking-widest uppercase">Luminar (Nighty)</h1>
+                        </header>
+                        <main className="w-full max-w-3xl">
+                            <section className="text-center mb-12">
+                                <h2 className="hero-title text-3xl md:text-4xl lg:text-5xl font-bold font-plex tracking-wider leading-tight">I need them, lots of them...</h2>
+                                <p className="hero-subtitle text-lg text-text-secondary mt-4 font-light">Tools. For your documents.</p>
+                            </section>
+                            <div className="feature-selector grid grid-cols-2 gap-4 mb-8 font-plex">
+                                <button onClick={() => setActiveTab('extractor')} className={`btn-matrix p-4 rounded-md text-center uppercase tracking-widest ${activeTab === 'extractor' ? 'active' : ''}`}>Highlight Extractor</button>
+                                <button onClick={() => setActiveTab('editor')} className={`btn-matrix p-4 rounded-md text-center uppercase tracking-widest ${activeTab === 'editor' ? 'active' : ''}`}>H&F Editor</button>
+                            </div>
+                            {activeTab === 'extractor' ? <HighlightExtractor /> : <HeaderFooterAdder />}
+                            <section ref={aboutRef} className="about-features mt-16 bg-black bg-opacity-30 border border-accent-cyan p-8 rounded-lg shadow-lg backdrop-blur-sm">
+                                <h3 className="font-plex text-2xl font-bold text-center mb-6 text-accent-green tracking-wider">ABOUT FEATURES</h3>
+                                <div className="grid md:grid-cols-2 gap-8 text-text-secondary">
+                                    <div><h4 className="font-plex text-lg font-bold text-accent-cyan mb-2">// HIGHLIGHT EXTRACTOR</h4><p className="font-light">Automatically pulls all highlighted text from your PDF and generates a new, beautifully styled document inspired by the Matrix aesthetic.</p></div>
+                                    <div><h4 className="font-plex text-lg font-bold text-accent-cyan mb-2">// H&F EDITOR</h4><p className="font-light">Adds custom headers and footers to your documents. Supports both PDF and Jupyter Notebook (.ipynb) files. Ideal for professional reports and academic submissions.</p></div>
+                                </div>
+                            </section>
+                        </main>
+                        <footer className="text-center mt-auto pt-16 text-text-secondary text-sm font-light font-fira">
+                            <p>&gt; System Online. All rights reserved. Chris Kyle 2025</p>
+                        </footer>
+                    </div>
+                </>
+            );
+        };
+
+        const FileInput = ({ file, handleFileChange, clearFile, acceptedTypes, fileTypeDescription }) => ( /* ... No changes ... */
+            <div className="p-1 rounded-lg bg-gradient-to-br from-accent-green to-accent-cyan hover:from-accent-cyan hover:to-accent-green transition-all duration-300">
+                <div className="upload-area bg-black rounded-md p-6 cursor-pointer" onClick={() => !file && document.getElementById('fileInput').click()}>
+                    {file ? (<div className="text-center font-fira"><i className="fas fa-file-code text-4xl text-accent-green mb-3"></i><h3 className="text-md font-semibold text-text-primary">{file.name}</h3><p className="text-sm text-text-secondary">{(file.size / 1024 / 1024).toFixed(2)} MB</p><button onClick={clearFile} className="mt-3 text-xs text-accent-cyan hover:underline">SELECT_ANOTHER_FILE</button></div>) 
+                    : (<div className="text-center font-plex uppercase"><i className="fas fa-upload text-4xl text-accent-cyan mb-3"></i><h3 className="text-lg font-semibold text-text-primary tracking-widest">Upload File</h3><p className="text-sm text-text-secondary font-light">Drag & Drop or Click</p><p className="text-xs text-text-secondary mt-2 font-fira normal-case">{fileTypeDescription}</p></div>)}
+                    <input id="fileInput" type="file" accept={acceptedTypes} onChange={handleFileChange} className="hidden" />
+                </div>
+            </div>
+        );
+
+        const HighlightExtractor = () => { /* ... No functional changes ... */ 
+            const [file, setFile] = useState(null); const [loading, setLoading] = useState(false); const [error, setError] = useState(''); const [previewUrl, setPreviewUrl] = useState('');
+            const handleFileChange = (e) => { const selectedFile = e.target.files[0]; if (selectedFile) { setFile(selectedFile); setError(''); setPreviewUrl(''); } };
+            const processFile = async () => {
+                if (!file) return; setLoading(true); setError(''); setPreviewUrl('');
+                const formData = new FormData(); formData.append('file', file);
+                try {
+                    const response = await fetch('/extract_highlights', { method: 'POST', body: formData }); const data = await response.json();
+                    if (!response.ok) { throw new Error(data.error || 'Server error'); } setPreviewUrl(data.previewUrl);
+                } catch (err) { setError(err.message); } finally { setLoading(false); }
+            };
+            return (
+                <div className="tool-container bg-black bg-opacity-30 border border-accent-cyan p-6 rounded-lg shadow-lg backdrop-blur-sm">
+                    <FileInput file={file} handleFileChange={handleFileChange} clearFile={() => setFile(null)} acceptedTypes=".pdf" fileTypeDescription="Accepts: .pdf" />
+                    <button onClick={processFile} disabled={!file || loading} className="btn-action font-plex w-full mt-6 font-bold py-3 rounded-md uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed">{loading ? 'Generating Notes...' : 'Generate Notes PDF'}</button>
+                    {error && <p className="text-accent-red text-center mt-4 font-fira">{`// ERROR: ${error}`}</p>}
+                    <div className={`preview-box mt-4 ${previewUrl ? 'expanded' : ''}`}>{previewUrl && <div className="border-2 border-accent-green p-2 rounded-lg"><object data={previewUrl} type="application/pdf" width="100%" height="500px"><p className="text-center p-4">Your browser does not support PDF previews. <a href={previewUrl} className="text-accent-cyan underline">Click here to download the PDF.</a></p></object><a href={previewUrl} download className="btn-action font-plex block w-full mt-2 font-bold py-2 rounded-md uppercase tracking-widest text-center">Download PDF</a></div>}</div>
+                </div>
+            );
+        };
+
+        const HeaderFooterAdder = () => {
+            const [file, setFile] = useState(null); const [loading, setLoading] = useState(false); const [error, setError] = useState(''); const [previewUrl, setPreviewUrl] = useState('');
+            // FIXED: Added footerCenter to state
+            const [formData, setFormData] = useState({
+                headerLeft: '', headerCenter: '', headerRight: '',
+                footerLeft: '', footerCenter: '', footerRight: '', 
+                startPageNum: 1,
+                pageNumPlacement: 'footer-center'
+            });
+
+            const handleFileChange = (e) => { const selectedFile = e.target.files[0]; if (selectedFile) { setFile(selectedFile); setError(''); setPreviewUrl(''); } };
+            const handleFormChange = (e) => { setFormData({ ...formData, [e.target.name]: e.target.value }); };
+            const handlePlacementChange = (placement) => { setFormData({ ...formData, pageNumPlacement: placement }); };
+            
+            const processFile = async () => {
+                if (!file) return; setLoading(true); setError(''); setPreviewUrl('');
+                const data = new FormData(); data.append('file', file);
+                for (const key in formData) { data.append(key, formData[key]); }
+                try {
+                    const response = await fetch('/add_header_footer', { method: 'POST', body: data }); const resData = await response.json();
+                    if (!response.ok) { throw new Error(resData.error || 'Failed to process file.'); } setPreviewUrl(resData.previewUrl);
+                } catch (err) { setError(err.message); } finally { setLoading(false); }
+            };
+
+            return (
+                <div className="tool-container bg-black bg-opacity-30 border border-accent-cyan p-6 rounded-lg shadow-lg backdrop-blur-sm">
+                    <FileInput file={file} handleFileChange={handleFileChange} clearFile={() => setFile(null)} acceptedTypes=".pdf,.ipynb" fileTypeDescription="Accepts: .pdf, .ipynb" />
+                    
+                    {/* FIXED: Re-added Footer Center input in a new 3x2 grid layout */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                        <input type="text" name="headerLeft" placeholder="Header Left" onChange={handleFormChange} className="input-matrix p-2 rounded-md" />
+                        <input type="text" name="headerCenter" placeholder="Header Center" onChange={handleFormChange} className="input-matrix p-2 rounded-md" />
+                        <input type="text" name="headerRight" placeholder="Header Right" onChange={handleFormChange} className="input-matrix p-2 rounded-md" />
+                        <input type="text" name="footerLeft" placeholder="Footer Left" onChange={handleFormChange} className="input-matrix p-2 rounded-md" />
+                        <input type="text" name="footerCenter" placeholder="Footer Center" onChange={handleFormChange} className="input-matrix p-2 rounded-md" />
+                        <input type="text" name="footerRight" placeholder="Footer Right" onChange={handleFormChange} className="input-matrix p-2 rounded-md" />
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4 mt-4 items-end">
+                        <div>
+                            <label className="text-text-secondary mb-2 block font-fira">Page Number Placement:</label>
+                            <div className="grid grid-cols-3 gap-2 p-2 border border-accent-cyan rounded-md">
+                                {['header-left', 'header-center', 'header-right', 'footer-left', 'footer-center', 'footer-right'].map(pos => (
+                                    <button key={pos} onClick={() => handlePlacementChange(pos)} className={`placement-grid-btn rounded-md p-2 text-xs font-plex uppercase ${formData.pageNumPlacement === pos ? 'active' : ''}`}>
+                                        {pos.replace('-', ' ')}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                         <div>
+                            <label className="text-text-secondary mb-2 block font-fira">Start Page #:</label>
+                            <input type="number" name="startPageNum" defaultValue="1" onChange={handleFormChange} className="input-matrix w-full p-2 rounded-md text-center" />
+                        </div>
+                    </div>
+                    
+                    <button onClick={processFile} disabled={!file || loading} className="btn-action font-plex w-full mt-6 font-bold py-3 rounded-md uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed">
+                       {loading ? 'Compiling...' : 'Generate Preview'}
+                    </button>
+                    {error && <p className="text-accent-red text-center mt-4 font-fira">{`// ERROR: ${error}`}</p>}
+                    <div className={`preview-box mt-4 ${previewUrl ? 'expanded' : ''}`}>
+                         {previewUrl &&
+                            <div className="border-2 border-accent-green p-2 rounded-lg">
+                                <object data={previewUrl} type="application/pdf" width="100%" height="500px"><p className="text-center p-4">Your browser does not support PDF previews. <a href={previewUrl} className="text-accent-cyan underline">Click here to download the PDF.</a></p></object>
+                                <a href={previewUrl} download className="btn-action font-plex block w-full mt-2 font-bold py-2 rounded-md uppercase tracking-widest text-center">Download PDF</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            );
+        };
+        
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
