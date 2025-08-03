@@ -1,0 +1,8 @@
+Flask
+Flask-WTF
+PyMuPDF
+reportlab
+Pygments
+matplotlib
+notebook
+pyppeteer
