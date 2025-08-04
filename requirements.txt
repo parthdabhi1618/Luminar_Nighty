@@ -25,6 +25,6 @@ webpdf
 matplotlib
 jupyterlab
 
-"nbconvert[webpdf]"
+nbconvert[webpdf]
 
 gunicorn
