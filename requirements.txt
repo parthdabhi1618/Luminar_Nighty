@@ -9,7 +9,6 @@ python-pptx
 openpyxl
 markdown
 PyMuPDF
-python-magic-bin  # safer cross-platform libmagic
 
 # Report generation
 reportlab
