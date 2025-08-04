@@ -16,7 +16,7 @@ reportlab
 # Async/Threading
 concurrent-log-handler
 
-# Jupyter/IPYNB support (optional)
+# Jupyter/IPYNB support
 nbconvert
 pyppeteer
 
@@ -24,3 +24,5 @@ webpdf
 
 matplotlib
 jupyterlab
+
+"nbconvert[webpdf]"
