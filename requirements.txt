@@ -24,3 +24,4 @@ pyppeteer
 gunicorn
 
 matplotlib
+jupyterlab
