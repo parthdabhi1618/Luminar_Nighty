@@ -1,8 +1,28 @@
-Flask
-Flask-WTF
-PyMuPDF
-reportlab
-Pygments
-matplotlib
-notebook
-pyppeteer
+# Flask & extensions
+flask==3.0.3
+flask-wtf==1.2.1
+werkzeug==3.0.2
+
+# File parsing
+python-docx==1.1.0
+python-pptx==0.6.23
+openpyxl==3.1.2
+markdown==3.6
+PyMuPDF==1.26.0
+python-magic-bin==0.4.14  # safer cross-platform libmagic
+
+# Report generation
+reportlab==4.0.8
+
+# Async/Threading
+concurrent-log-handler==0.9.20
+
+# AI model API
+openai==1.31.1
+
+# Jupyter/IPYNB support (optional)
+nbconvert==7.16.3
+pyppeteer==1.0.2
+
+# WSGI server for Render (production)
+gunicorn==22.0.0
