@@ -20,8 +20,7 @@ concurrent-log-handler
 nbconvert
 pyppeteer
 
-# WSGI server for Render (production)
-gunicorn
+webpdf
 
 matplotlib
 jupyterlab
