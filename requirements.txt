@@ -29,9 +29,4 @@ gunicorn==21.2.0
 
 playwright
 fitz
-os
-tempfile
-re
-subprocess
-html
-io
+
