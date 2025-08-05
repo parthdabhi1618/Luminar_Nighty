@@ -26,3 +26,5 @@ traitlets==5.14.3
 
 # Gunicorn for production
 gunicorn==21.2.0
+
+playwright
