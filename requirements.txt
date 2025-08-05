@@ -26,3 +26,6 @@ matplotlib
 jupyterlab
 
 playwright
+
+gunicorn==21.2.0
+greenlet==2.0.2
