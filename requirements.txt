@@ -1,31 +1,28 @@
 # Flask & extensions
-flask
-flask-wtf
-werkzeug
+Flask==2.3.3
+Flask-WTF==1.1.1
+Werkzeug==2.3.7
 
 # File parsing
-python-docx
-python-pptx
-openpyxl
-markdown
-PyMuPDF
+python-docx==1.1.0
+python-pptx==0.6.21
+openpyxl==3.1.2
+markdown==3.6
+PyMuPDF==1.22.5
 
 # Report generation
-reportlab
+reportlab==4.1.0
 
-# Async/Threading
-concurrent-log-handler
+# Logging
+concurrent-log-handler==0.9.20
 
-# Jupyter/IPYNB support
-nbconvert
-pyppeteer
+# Plotting & rendering math
+matplotlib==3.8.4
+pygments==2.18.0
 
-webpdf
+# Optional: if you use nbconvert for .ipynb → PDF
+nbconvert==7.16.3
+traitlets==5.14.3
 
-matplotlib
-jupyterlab
-
-playwright
-
+# Gunicorn for production
 gunicorn==21.2.0
-greenlet==2.0.2
