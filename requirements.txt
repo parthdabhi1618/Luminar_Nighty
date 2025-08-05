@@ -28,5 +28,4 @@ traitlets
 gunicorn
 
 playwright
-fitz
 
