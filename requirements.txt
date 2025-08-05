@@ -1,31 +1,31 @@
 # Flask & extensions
-Flask==2.3.3
-Flask-WTF==1.1.1
-Werkzeug==2.3.7
+Flask
+Flask-WTF
+Werkzeug
 
 # File parsing
-python-docx==1.1.0
-python-pptx==0.6.21
-openpyxl==3.1.2
-markdown==3.6
+python-docx
+python-pptx
+openpyxl
+markdown
 PyMuPDF
 
 # Report generation
-reportlab==4.1.0
+reportlab
 
 # Logging
-concurrent-log-handler==0.9.20
+concurrent-log-handler
 
 # Plotting & rendering math
-matplotlib==3.8.4
-pygments==2.18.0
+matplotlib
+pygments
 
 # Optional: if you use nbconvert for .ipynb → PDF
-nbconvert==7.16.3
-traitlets==5.14.3
+nbconvert
+traitlets
 
 # Gunicorn for production
-gunicorn==21.2.0
+gunicorn
 
 playwright
 fitz
