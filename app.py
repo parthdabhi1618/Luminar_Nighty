@@ -197,7 +197,7 @@ def add_header_footer_route():
         print(f"Error during H&F addition: {e}"); return jsonify({'error': f'Failed to process PDF: {str(e)}'}), 500
     finally: pass
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=5000)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
 
 application = app
